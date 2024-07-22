@@ -4,19 +4,12 @@ phases:
     runtime-versions:
       nodejs: 20
     commands:
-      - npm install yarn -g
-  #pre_build:
-  #@@@@@@@@@@@@@  commands:
-  #######    - npm install
+      - npm install
   build:
     commands:
-      - yarn install
-      - yarn run build
+      - npm run build
     finally:
       - echo 'This is the finally block execution!'
-  post_build:
-    - aws s3 cp dist/build/* s3://myweb-server1 --recursive
-    - echo Build completed on `date`
 artifacts:
   files:
     - "**/*"
