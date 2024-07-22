@@ -1,34 +1,50 @@
-import React from "react";
+import logo from "./logo.svg";
 import "./App.css";
-import { Layout, Header, Navigation, Drawer, Content } from "react-mdl";
-import Main from "./Components/Main";
-import { Link } from 'react-router-dom';
+import { useState } from "react";
 
 function App() {
+  const [loading, setLoading] = useState(null);
+  const onSubmit = async (event) => {
+    event.preventDefault();
+
+    setLoading(true);
+    try {
+      let file = event.target[0].files[0];
+      const url = `http://localhost:3001/presign`;
+      const params = new URLSearchParams({
+        key: file.name,
+      });
+      let resp = await fetch(url, {
+        method: "POST",
+        body: params,
+      });
+      let presignResp = await resp.json();
+
+      console.log("presign resp", presignResp);
+
+      resp = await fetch(presignResp.url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type,
+        },
+        body: file,
+      });
+      console.log("resp", resp);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
-    <div className="demo-big-content">
-      <Layout>
-        <Header className="header-color" title={<Link style={{textDecoration: 'none', color: 'white'}} to="/">My Portfolio</Link>} scroll>
-          <Navigation>
-            <Link to="/Resume">Resume</Link>
-            <Link to="/Aboutme">About Me</Link>
-            <Link to="/Projects">Projects</Link>
-            <Link to="/Contact">Contact</Link>
-          </Navigation>
-        </Header>
-        <Drawer title={<Link style={{textDecoration: 'none', color: 'black'}} to="/">My Portfolio</Link>}>
-          <Navigation>
-            <Link to="/Resume">Resume</Link>
-            <Link to="/Aboutme">About Me</Link>
-            <Link to="/Projects">Projects</Link>
-            <Link to="/Contact">Contact</Link>
-          </Navigation>
-        </Drawer>
-        <Content>
-          <div className="page-content"></div>
-          <Main />
-        </Content>
-      </Layout>
+    <div className="App">
+      <header className="App-header">
+        <form onSubmit={onSubmit}>
+          <input type="file" />
+          <br />
+          <button disabled={loading}>Upload!</button>
+        </form>
+      </header>
     </div>
   );
 }
