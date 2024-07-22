@@ -9,7 +9,7 @@ phases:
     commands:
       - npm run build
     finally:
-      - echo 'This is the finally block execution!'
+      - echo 'This is the finally block executio!!!!!!!!!!!!!n!'
 artifacts:
   files:
     - "**/*"
